@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitter Leaders PQ Scores</title>
+    
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+    color: #333;
+    margin: 0;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin-bottom: 20px;
+    box-sizing: border-box;
+}
+
+input[type="text"],
+button {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border: none;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+.result {
+    margin-top: 20px;
+    padding: 15px;
+    background: #e7f3fe;
+    border: 1px solid #b8daff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.result h2 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    color: #007bff;
+}
+
+.result p {
+    margin: 0;
+    color: #333;
+}
+
+.result a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.result a:hover {
+    text-decoration: underline;
+}
+
+.result pre {
+    margin: 0;
+    padding: 10px;
+    background: #f4f4f4;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: auto;
+}
+
+/* Responsive styling */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    input[type="text"],
+    button {
+        padding: 8px;
+        margin: 8px 0;
+    }
+    
+    .result {
+        padding: 10px;
+    }
+    
+    .result h2 {
+        font-size: 1.2em;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.6em;
+    }
+    
+    input[type="text"],
+    button {
+        padding: 6px;
+        margin: 6px 0;
+    }
+    
+    .result {
+        padding: 8px;
+    }
+    
+    .result h2 {
+        font-size: 1.1em;
+    }
+}
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Twitter Leaders PQ Scores</h1>
+    <input type="text" id="username" placeholder="Enter Twitter Username" />
+    <button id="getScoreBtn">Get PQ Score</button>
+    
+    <div class="result" id="result" style="display:none;"></div>
+</div>
+
+<script>
+    document.getElementById('getScoreBtn').addEventListener('click', async () => {
+        const username = document.getElementById('username').value;
+        if (!username) {
+            alert('Please enter a username');
+            return;
+        }
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'none';
+        
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/scores/${username}`);
+            if (!response.ok) {
+                throw new Error('User not found');
+            }
+            const data = await response.json();
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = 
+                `<h2>Score Details:</h2>` +
+                `<p><strong>Username:</strong> ${data.username || 'N/A'}</p>` +
+                `<p><strong>Bio:</strong> ${data.bio || 'N/A'}</p>` +
+                `<p><strong>Profile URL:</strong> <a href="${data.profile_url || '#'}" target="_blank">${data.profile_url || 'N/A'}</a></p>` +
+                `<p><strong>Location:</strong> ${data.location || 'N/A'}</p>` +
+                `<p><strong>Website:</strong> ${data.website || 'N/A'}</p>` +
+                `<p><strong>PQ Score:</strong> ${data.PQ_score || 'N/A'}</p>`
+            ;
+        } catch (error) {
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = `<h2>Error:</h2><p>${error.message}</p>`;
+        }
+    });
+</script>
+
+</body>
+</html>
