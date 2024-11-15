@@ -160,7 +160,7 @@ button:hover {
             return;
         }
         const resultDiv = document.getElementById('result');
-        resultDiv.style.display = 'none';
+        resultDiv.style.display = 'none'; // Hide the result div initially
         
         try {
             const response = await fetch(`http://127.0.0.1:8000/api/scores/${username}`);
@@ -168,6 +168,8 @@ button:hover {
                 throw new Error('User not found');
             }
             const data = await response.json();
+            
+            // Show the result div and fill it with the data
             resultDiv.style.display = 'block';
             resultDiv.innerHTML = 
                 `<h2>Score Details:</h2>` +
@@ -176,10 +178,9 @@ button:hover {
                 `<p><strong>Profile URL:</strong> <a href="${data.profile_url || '#'}" target="_blank">${data.profile_url || 'N/A'}</a></p>` +
                 `<p><strong>Location:</strong> ${data.location || 'N/A'}</p>` +
                 `<p><strong>Website:</strong> ${data.website || 'N/A'}</p>` +
-                `<p><strong>PQ Score:</strong> ${data.PQ_score || 'N/A'}</p>`
-            ;
+                `<p><strong>PQ Score:</strong> ${data.PQ_score || 'N/A'}</p>`;
         } catch (error) {
-            resultDiv.style.display = 'block';
+            resultDiv.style.display = 'block'; // Show error message in case of failure
             resultDiv.innerHTML = `<h2>Error:</h2><p>${error.message}</p>`;
         }
     });

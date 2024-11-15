@@ -3,31 +3,39 @@ from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 import pandas as pd
 import uvicorn
-import joblib  # Used for loading the trained model
+import joblib
+from fastapi.middleware.cors import CORSMiddleware
 
-# Create the FastAPI app
 app = FastAPI()
 
-# Load the dataset
-data = pd.read_csv('twitter_leaders.csv')  # Update with your actual dataset path
+# Load the dataset (ensure the correct path)
+data = pd.read_csv('twitter_leaders.csv')
+
+# CORS configuration (update for production security)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For production, specify allowed origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Load the trained model and TF-IDF vectorizer
-model = joblib.load('twitter_leaders_model.pkl')  # Load your trained model
-tfidf_vectorizer = joblib.load('tfidf_vectorizer.pkl')  # Load your TF-IDF vectorizer
+model = joblib.load('twitter_leaders_model.pkl')
+tfidf_vectorizer = joblib.load('tfidf_vectorizer.pkl')
 
-# Serve static files (like index.html)
-app.mount("/static", StaticFiles(directory="static"), name="static")  # Adjust if index.html is in a subfolder
+# Serve static files (adjust path if needed)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Route to serve the HTML file
 @app.get("/", response_class=HTMLResponse)
 async def read_index():
-    with open("static/index.html") as f:  # Adjust the path as necessary
+    with open("static/index.html") as f:
         return HTMLResponse(content=f.read())
 
 # Route to get PQ score based on username
 @app.get("/api/scores/{username}")
 async def get_score(username: str):
-    # Normalize username to lower case for comparison
     user_data = data[data['username'].str.lower() == username.lower()]
 
     if user_data.empty:
