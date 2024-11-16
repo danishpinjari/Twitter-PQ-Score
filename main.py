@@ -11,10 +11,9 @@ app = FastAPI()
 # Load the dataset (ensure the correct path)
 data = pd.read_csv('twitter_leaders.csv')
 
-# CORS configuration (update for production security)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For production, specify allowed origins
+    allow_origins=["*"],  # Accept requests from all domains
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

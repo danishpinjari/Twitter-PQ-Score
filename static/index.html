@@ -153,37 +153,39 @@ button:hover {
 </div>
 
 <script>
-    document.getElementById('getScoreBtn').addEventListener('click', async () => {
-        const username = document.getElementById('username').value;
-        if (!username) {
-            alert('Please enter a username');
-            return;
-        }
-        const resultDiv = document.getElementById('result');
-        resultDiv.style.display = 'none'; // Hide the result div initially
+document.getElementById('getScoreBtn').addEventListener('click', async () => {
+    const username = document.getElementById('username').value;
+    if (!username) {
+        alert('Please enter a username');
+        return;
+    }
+    const resultDiv = document.getElementById('result');
+    resultDiv.style.display = 'none'; // Hide the result div initially
+
+    try {
+        // Use your deployed FastAPI URL here
+        const response = await fetch(`https://twitter-pq-score.onrender.com/api/scores/${username}`);
         
-        try {
-            const response = await fetch(`http://127.0.0.1:8000/api/scores/${username}`);
-            if (!response.ok) {
-                throw new Error('User not found');
-            }
-            const data = await response.json();
-            
-            // Show the result div and fill it with the data
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = 
-                `<h2>Score Details:</h2>` +
-                `<p><strong>Username:</strong> ${data.username || 'N/A'}</p>` +
-                `<p><strong>Bio:</strong> ${data.bio || 'N/A'}</p>` +
-                `<p><strong>Profile URL:</strong> <a href="${data.profile_url || '#'}" target="_blank">${data.profile_url || 'N/A'}</a></p>` +
-                `<p><strong>Location:</strong> ${data.location || 'N/A'}</p>` +
-                `<p><strong>Website:</strong> ${data.website || 'N/A'}</p>` +
-                `<p><strong>PQ Score:</strong> ${data.PQ_score || 'N/A'}</p>`;
-        } catch (error) {
-            resultDiv.style.display = 'block'; // Show error message in case of failure
-            resultDiv.innerHTML = `<h2>Error:</h2><p>${error.message}</p>`;
+        if (!response.ok) {
+            throw new Error('User not found');
         }
-    });
+        const data = await response.json();
+        
+        // Show the result div and fill it with the data
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = 
+            `<h2>Score Details:</h2>` +
+            `<p><strong>Username:</strong> ${data.username || 'N/A'}</p>` +
+            `<p><strong>Bio:</strong> ${data.bio || 'N/A'}</p>` +
+            `<p><strong>Profile URL:</strong> <a href="${data.profile_url || '#'}" target="_blank">${data.profile_url || 'N/A'}</a></p>` +
+            `<p><strong>Location:</strong> ${data.location || 'N/A'}</p>` +
+            `<p><strong>Website:</strong> ${data.website || 'N/A'}</p>` +
+            `<p><strong>PQ Score:</strong> ${data.PQ_score || 'N/A'}</p>`;
+    } catch (error) {
+        resultDiv.style.display = 'block'; // Show error message in case of failure
+        resultDiv.innerHTML = `<h2>Error:</h2><p>${error.message}</p>`;
+    }
+});
 </script>
 
 </body>
